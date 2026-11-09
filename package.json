@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "tsx watch src/local.ts",
     "typecheck": "tsc",
-    "lint": "oxlint --deny-warnings",
-    "lint:fix": "oxlint --fix",
+    "lint": "oxlint --type-aware --deny-warnings",
+    "lint:fix": "oxlint --type-aware --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "vitest run",
@@ -29,6 +29,7 @@
     "lefthook": "2.2.2",
     "oxfmt": "0.77.0",
     "oxlint": "1.92.0",
+    "oxlint-tsgolint": "7.0.2006",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vitest": "5.1.0"

@@ -1,4 +1,4 @@
-import type { Rule, UserConfig } from "@commitlint/types";
+import { RuleConfigSeverity, type Rule, type UserConfig } from "@commitlint/types";
 
 // 後から読み返したときに意味が伝わらない subject を拒否する
 const vaguePatterns: { pattern: RegExp; reason: string }[] = [
@@ -25,12 +25,12 @@ const config: UserConfig = {
   plugins: [{ rules: { "subject-not-vague": subjectNotVague } }],
   rules: {
     // 日本語の subject を書くので、英語の大文字・小文字ルールは使わない
-    "subject-case": [0],
-    "subject-min-length": [2, "always", 6],
-    "subject-not-vague": [2, "always"],
+    "subject-case": [RuleConfigSeverity.Disabled],
+    "subject-min-length": [RuleConfigSeverity.Error, "always", 6],
+    "subject-not-vague": [RuleConfigSeverity.Error, "always"],
     // 本文には、そのコミットを実施した理由・背景などの意思決定を書く
-    "body-empty": [2, "never"],
-    "body-min-length": [2, "always", 20],
+    "body-empty": [RuleConfigSeverity.Error, "never"],
+    "body-min-length": [RuleConfigSeverity.Error, "always", 20],
   },
 };
 
