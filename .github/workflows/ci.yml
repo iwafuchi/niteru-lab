@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 必要最小限の権限だけを与える
+permissions:
+  contents: read
+
+# 同じブランチで新しい実行が始まったら、古い実行を取り消す
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # CI では git hooks を設定しない
+  LEFTHOOK: "0"
+
+jobs:
+  check:
+    name: Lint / Format / Typecheck / Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Action はタグではなくコミット SHA で固定する（タグの付け替えによる改ざん対策）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # mise.toml に書いた Node / pnpm / gitleaks をローカルと同じバージョンで入れる
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # 全履歴を検査するため
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      # git commit --no-verify でフックを飛ばした場合も、ここで検出する
+      - run: gitleaks git --redact --no-banner --verbose
+
+  commitlint:
+    name: Commit messages
+    # PR に含まれるコミットだけを検査する
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
