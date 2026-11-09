@@ -18,6 +18,17 @@ pre-commit:
       glob: "*.{ts,mts,cts,js,mjs,cjs}"
       run: pnpm exec oxlint --deny-warnings {staged_files}
 
+# コミットメッセージの検査（{1} はメッセージが書かれたファイルのパス）
+commit-msg:
+  jobs:
+    # Conventional Commits の形式と、意味の伝わらない subject を検査する
+    - name: commitlint
+      run: pnpm exec commitlint --edit {1}
+
+    # メッセージ本文に認証情報が含まれていないか検査する
+    - name: secrets
+      run: gitleaks stdin --redact --no-banner --verbose < {1}
+
 # プッシュ前：プロジェクト全体の型チェック（ファイル単位では判定できないため）
 pre-push:
   jobs:
