@@ -31,6 +31,10 @@ jobs:
 
       # mise.toml に書いた Node / pnpm / gitleaks をローカルと同じバージョンで入れる
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
+          version: 2026.11.4
+          sha256: 0296d9cba9324106d4e0962bb94a2072902f3658813aeb3b09504947bb8ddc2b
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
@@ -49,6 +53,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
+          version: 2026.11.4
+          sha256: 0296d9cba9324106d4e0962bb94a2072902f3658813aeb3b09504947bb8ddc2b
       # git commit --no-verify でフックを飛ばした場合も、ここで検出する
       - run: gitleaks git --redact --no-banner --verbose
 
@@ -64,6 +72,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
+          version: 2026.11.4
+          sha256: 0296d9cba9324106d4e0962bb94a2072902f3658813aeb3b09504947bb8ddc2b
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
         env:
