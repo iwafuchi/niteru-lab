@@ -16,7 +16,7 @@ pre-commit:
 
     - name: lint
       glob: "*.{ts,mts,cts,js,mjs,cjs}"
-      run: pnpm exec oxlint --deny-warnings {staged_files}
+      run: pnpm exec oxlint --type-aware --deny-warnings {staged_files}
 
 # コミットメッセージの検査（{1} はメッセージが書かれたファイルのパス）
 commit-msg:
