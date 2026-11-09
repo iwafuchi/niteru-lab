@@ -90,10 +90,10 @@ npm パッケージと GitHub Actions は Dependabot が毎週月曜に更新の
 取得するものはすべて、バージョンに加えてチェックサム（またはコミット SHA）で固定します。
 同じバージョン番号のまま中身が差し替えられる攻撃を防ぐためです。
 
-| 対象                    | 固定する場所                                     | 更新の方法                                                        |
-| ----------------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
-| npm パッケージ          | `pnpm-lock.yaml`（integrity）                    | Dependabot、または `pnpm add -E`                                  |
-| pnpm 本体               | `package.json` の `packageManager`（`+sha512.`） | 新しいバージョンの tarball の sha512 に書き換える                 |
-| Node.js・pnpm・gitleaks | `mise.lock`（`mise.toml` で `locked = true`）    | `mise lock <tool>@<version>`                                      |
-| mise 本体（CI）         | `ci.yml` の `version` と `sha256`                | リリースの `SHASUMS256.txt` から `linux-x64` のバイナリの値を写す |
-| GitHub Actions          | `ci.yml` の `uses:`（コミット SHA）              | Dependabot                                                        |
+| 対象                    | 固定する場所                                     | 更新の方法                                                                                          |
+| ----------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| npm パッケージ          | `pnpm-lock.yaml`（integrity）                    | Dependabot、または `pnpm add -E`                                                                    |
+| pnpm 本体               | `package.json` の `packageManager`（`+sha512.`） | 新しいバージョンの tarball の sha512 に書き換える                                                   |
+| Node.js・pnpm・gitleaks | `mise.lock`（`mise.toml` で `locked = true`）    | `mise lock <tool>@<version>`                                                                        |
+| mise 本体（CI）         | `ci.yml` の `version` と `sha256`                | リリースの `SHASUMS256.txt` から `linux-x64` のバイナリの値を写す                                   |
+| GitHub Actions          | `.github/workflows/actions.lock`（コミット SHA） | Dependabot（lockfile も同じ PR で更新される）。ワークフローに Action を追加したら `gh actions-lock` |
