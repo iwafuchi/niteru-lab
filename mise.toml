@@ -2,3 +2,7 @@
 gitleaks = "8.30.1"
 node = "24"
 pnpm = "12"
+
+[settings]
+# mise.lock に記録したバージョンとチェックサム以外ではツールを入れない
+locked = true

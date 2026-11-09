@@ -84,3 +84,16 @@ npm パッケージと GitHub Actions は Dependabot が毎週月曜に更新の
 - コミットメッセージは `build(deps): bump ...` / `ci(deps): bump ...` の形式で自動生成されます。body には更新内容（リリースノートへのリンクなど）が入るので、そのまま受け入れます
 - マージする前に、CI の成功とリリースノートの破壊的変更を確認します。とくにメジャー更新と、0.x のパッケージ（oxfmt など）の更新に注意します
 - `mise.toml` のツール（Node.js・pnpm・gitleaks）は Dependabot の対象外です。手動で更新します
+
+## バージョンとチェックサムの固定
+
+取得するものはすべて、バージョンに加えてチェックサム（またはコミット SHA）で固定します。
+同じバージョン番号のまま中身が差し替えられる攻撃を防ぐためです。
+
+| 対象                    | 固定する場所                                     | 更新の方法                                                        |
+| ----------------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
+| npm パッケージ          | `pnpm-lock.yaml`（integrity）                    | Dependabot、または `pnpm add -E`                                  |
+| pnpm 本体               | `package.json` の `packageManager`（`+sha512.`） | 新しいバージョンの tarball の sha512 に書き換える                 |
+| Node.js・pnpm・gitleaks | `mise.lock`（`mise.toml` で `locked = true`）    | `mise lock <tool>@<version>`                                      |
+| mise 本体（CI）         | `ci.yml` の `version` と `sha256`                | リリースの `SHASUMS256.txt` から `linux-x64` のバイナリの値を写す |
+| GitHub Actions          | `ci.yml` の `uses:`（コミット SHA）              | Dependabot                                                        |
