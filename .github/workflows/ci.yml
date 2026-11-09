@@ -24,13 +24,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # Action はタグではなくコミット SHA で固定する（タグの付け替えによる改ざん対策）
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Action の実体は .github/workflows/actions.lock に記録したコミットに固定される
+      # （タグが付け替えられても、記録と異なるコミットは実行されない）。更新は gh actions-lock で行う
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
 
       # mise.toml に書いた Node / pnpm / gitleaks をローカルと同じバージョンで入れる
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: jdx/mise-action@v5.2.7
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4
@@ -47,12 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           # 全履歴を検査するため
           fetch-depth: 0
           persist-credentials: false
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: jdx/mise-action@v5.2.7
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4
@@ -67,11 +68,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: jdx/mise-action@v5.2.7
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4

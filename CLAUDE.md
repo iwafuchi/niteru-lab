@@ -22,6 +22,7 @@ pnpm dev         # ローカルで API を起動
 - PR の本文は `.github/pull_request_template.md` の見出し（背景・変更内容・判断したこと・確認したこと）に沿って書く
 - PR を作ったら CI の成功を確認する。**マージはユーザーが行う**
 - 強制 push で履歴を書き換えない。PR の修正は追加のコミットで行う
+- ワークフローの `uses:` を追加・変更したら `gh actions-lock` で `.github/workflows/actions.lock` を更新し、`gh actions-lock --verify` で確認する。lockfile は手で編集しない
 - 依存パッケージはバージョンを固定して追加する（`pnpm add -E`）。ビルドスクリプトを持つパッケージは `pnpm-workspace.yaml` の `allowBuilds` で許可・拒否を明示する
 
 ## コード
