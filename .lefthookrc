@@ -1,0 +1,8 @@
+# lefthook が各ジョブの前に読み込む sh スクリプト。
+# エディタの Git 連携など mise が有効化されていないシェルからコミットしても、
+# mise.toml で固定した node / pnpm / gitleaks を使えるようにする。
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise env -s bash)"
+elif [ -x "$HOME/.local/bin/mise" ]; then
+  eval "$("$HOME/.local/bin/mise" env -s bash)"
+fi

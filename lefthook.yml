@@ -1,0 +1,26 @@
+# フック実行前に読み込む sh スクリプト。mise.toml のツールを PATH に通す
+rc: ./.lefthookrc
+
+# コミット前：ステージしたファイルだけを素早くチェックする
+pre-commit:
+  parallel: true
+  jobs:
+    # ステージした差分に認証情報（AWS キー、トークンなど）が含まれていないか検査する
+    - name: secrets
+      run: gitleaks git --pre-commit --staged --redact --no-banner --verbose
+
+    - name: format
+      glob: "*.{ts,mts,cts,js,mjs,cjs,json,jsonc,md,yml,yaml}"
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+
+    - name: lint
+      glob: "*.{ts,mts,cts,js,mjs,cjs}"
+      run: pnpm exec oxlint --deny-warnings {staged_files}
+
+# プッシュ前：プロジェクト全体の型チェック（ファイル単位では判定できないため）
+pre-push:
+  jobs:
+    - name: typecheck
+      glob: "*.{ts,mts,cts}"
+      run: pnpm typecheck

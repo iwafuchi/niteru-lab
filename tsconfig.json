@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    // 実行環境（Node 24）に合わせる
+    "target": "es2024",
+    "lib": ["es2024"],
+    "types": ["node"],
+
+    // ビルドは esbuild（CDK の NodejsFunction）と tsx に任せ、tsc は型チェック専用にする
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+
+    // 1ファイルずつ変換するツール（esbuild / tsx）でも安全に扱える書き方を強制する
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+
+    // 型チェックの厳しさ
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src", "infra", "test", "*.config.ts"]
+}

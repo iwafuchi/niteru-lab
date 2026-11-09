@@ -1,0 +1,32 @@
+# 依存パッケージ
+node_modules/
+
+# ビルド成果物
+dist/
+*.tsbuildinfo
+
+# CDK
+cdk.out/
+
+# テスト
+coverage/
+
+# 環境変数・ローカル設定
+.env
+.env.*
+!.env.example
+mise.local.toml
+
+# Claude Code の個人設定（許可したコマンドに認証情報が含まれうる）
+.claude/settings.local.json
+CLAUDE.local.md
+
+# ログ
+*.log
+
+# OS / エディタ
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
