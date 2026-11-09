@@ -29,9 +29,15 @@ commit-msg:
     - name: secrets
       run: gitleaks stdin --redact --no-banner --verbose < {1}
 
-# プッシュ前：プロジェクト全体の型チェック（ファイル単位では判定できないため）
+# プッシュ前：プロジェクト全体を対象にする検査（ファイル単位では判定できないため）
 pre-push:
+  parallel: true
   jobs:
     - name: typecheck
       glob: "*.{ts,mts,cts}"
       run: pnpm typecheck
+
+    # 仕様からずれた変更を push する前に止める（unit と integration）
+    - name: test
+      glob: "*.{ts,mts,cts,json}"
+      run: pnpm test
