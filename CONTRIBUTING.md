@@ -76,3 +76,11 @@ fix: 空白を含む入力で n-gram が空になる問題を修正
 - メッセージに認証情報が含まれていないか（gitleaks）
 
 body の有無は機械的に検査できますが、意思決定が分かる内容になっているかは書く人（とレビューする人）の判断です。
+
+## 依存パッケージの更新（Dependabot）
+
+npm パッケージと GitHub Actions は Dependabot が毎週月曜に更新の PR を作ります（設定は `.github/dependabot.yml`）。
+
+- コミットメッセージは `build(deps): bump ...` / `ci(deps): bump ...` の形式で自動生成されます。body には更新内容（リリースノートへのリンクなど）が入るので、そのまま受け入れます
+- マージする前に、CI の成功とリリースノートの破壊的変更を確認します。とくにメジャー更新と、0.x のパッケージ（oxfmt など）の更新に注意します
+- `mise.toml` のツール（Node.js・pnpm・gitleaks）は Dependabot の対象外です。手動で更新します

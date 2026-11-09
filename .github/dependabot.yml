@@ -1,0 +1,44 @@
+version: 2
+
+updates:
+  # npm パッケージ（pnpm の lockfile も対象）
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Tokyo
+    # 公開直後のバージョンは避ける。乗っ取られたパッケージが短期間で
+    # 取り下げられることが多く、少し待つだけで被害を避けやすいため
+    cooldown:
+      default-days: 7
+    # Conventional Commits の形式にする（例：build(deps): bump hono from ...）
+    commit-message:
+      prefix: build
+      prefix-development: build
+      include: scope
+    groups:
+      # マイナー・パッチ更新は 1 つの PR にまとめる。メジャー更新は破壊的変更を
+      # 含みうるので、パッケージごとに個別の PR にして 1 つずつ確認する
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Lambda のランタイム（Node.js 24）に合わせているため、メジャー更新はしない
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+
+  # GitHub Actions（コミット SHA で固定した Action も更新される）
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      github-actions:
+        patterns: ["*"]
