@@ -31,6 +31,14 @@ pnpm dev         # ローカルで API を起動
 - `enum` や `namespace` は使わない（`erasableSyntaxOnly`）。型だけの import は `import type`
 - 認証情報をコードやコミットメッセージに書かない。API キーは SSM Parameter Store、AWS の認証は OIDC
 
+## API
+
+- 仕様の正はテスト：`test/integration/app.test.ts`（HTTP の振る舞い）、`test/unit/validation.test.ts`（入力の条件）。要約は README の「API」節
+- OpenAPI の仕様書は作らない。利用者は IAM 認証の非公開 Function URL を呼ぶ CLI と e2e テストだけで、仕様書を読む人やツールがいないため
+- 入力検証は zod のスキーマで書く。`@hono/zod-validator` は使わない（得られる型付けは Hono 組み込みの `validator()` でも得られ、依存を増やす理由がない）
+  - ボディを持つエンドポイントを追加するときは、組み込みの `validator()` に移る。その際、content-type が JSON でないリクエストと壊れた JSON の扱い、`onError` で返すエラーの形を先にテストで決める
+  - 見直すきっかけ：TypeScript のクライアントから Hono RPC で呼ぶ、OpenAPI が必要になる、ボディを持つエンドポイントが 3 つ以上になる
+
 ## テスト
 
 [test/README.md](test/README.md) に従う。
