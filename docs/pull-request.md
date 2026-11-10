@@ -4,7 +4,7 @@
 
 1. `main` からブランチを作る。名前は `<type>/<内容>`（例：`feat/normalize`、`docs/reorganize`）。type は [commit.md](commit.md) と同じ
 2. [commit.md](commit.md) に従ってコミットする
-3. push して PR を作る。本文は [テンプレート](../.github/pull_request_template.md) の見出し（背景・変更内容・判断したこと・確認したこと）に沿って書く
+3. push して PR を作る。本文は [テンプレート](../.github/pull_request_template.md) の見出し（概要・背景・変更内容・判断したこと・確認したこと）に沿って書く。概要は、本文を読まなくても何が変わるか分かるよう 1〜3 行にまとめる
 4. CI の成功を確認する
 5. **マージはリポジトリの持ち主が行う**（Claude Code はマージしない）
 6. マージ後、手元の `main` を最新にし、マージ済みのブランチを削除する
