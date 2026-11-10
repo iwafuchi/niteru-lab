@@ -24,7 +24,8 @@ describe("POST /tokenize の入力検証", () => {
       ["結合された絵文字（家族）", "👨‍👩‍👧"],
       ["濁点を結合文字で表した仮名", "が"],
     ])("文字数は見た目の 1 文字単位で数え、%sも 1 文字として扱う", (_label, char) => {
-      const text = char.repeat(MAX_TEXT_LENGTH);
+      // 記号だけの入力は別の仕様で拒否されるため、先頭に文字を 1 つ置く
+      const text = "あ" + char.repeat(MAX_TEXT_LENGTH - 1);
       expect(text.length).toBeGreaterThan(MAX_TEXT_LENGTH);
       expect(parseTokenizeRequest({ text })).toEqual({ ok: true, text });
       expect(parseTokenizeRequest({ text: text + char }).ok).toBe(false);
@@ -46,6 +47,20 @@ describe("POST /tokenize の入力検証", () => {
 
     test("空文字は拒否する", () => {
       expect(parseTokenizeRequest({ text: "" }).ok).toBe(false);
+    });
+
+    test.each([" ", "　\n\t", "！？", "🎵♪"])(
+      "空白や記号だけで、正規化すると空になる入力は拒否する: %j",
+      (text) => {
+        expect(parseTokenizeRequest({ text })).toEqual({
+          ok: false,
+          error: "text には文字か数字を 1 文字以上含めてください",
+        });
+      },
+    );
+
+    test("記号に囲まれていても、文字が 1 文字あれば受け付ける", () => {
+      expect(parseTokenizeRequest({ text: "「あ」" })).toEqual({ ok: true, text: "「あ」" });
     });
 
     test.each([

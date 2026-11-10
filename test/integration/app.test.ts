@@ -37,6 +37,14 @@ describe("POST /tokenize", () => {
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "text は 1000 文字以内で指定してください" });
   });
+
+  test("空白や記号だけの入力はリクエストの不備として 400 を返す", async () => {
+    const res = await postTokenize(JSON.stringify({ text: "　！？ " }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({
+      error: "text には文字か数字を 1 文字以上含めてください",
+    });
+  });
 });
 
 describe("未定義のルート", () => {
