@@ -1,17 +1,24 @@
 import { z } from "zod";
+import { normalize } from "./normalize";
 
 // 入力の上限。形態素解析のコストと Lambda の実行時間を抑えるため
 export const MAX_TEXT_LENGTH = 1000;
 
 const TEXT_REQUIRED = "text は空でない文字列で指定してください";
 const TEXT_TOO_LONG = `text は ${MAX_TEXT_LENGTH} 文字以内で指定してください`;
+const TEXT_NOTHING_TO_COMPARE = "text には文字か数字を 1 文字以上含めてください";
 
 const tokenizeRequestSchema = z.object(
   {
     text: z
       .string({ error: TEXT_REQUIRED })
-      .min(1, { error: TEXT_REQUIRED })
-      .refine((text) => !exceedsGraphemes(text, MAX_TEXT_LENGTH), { error: TEXT_TOO_LONG }),
+      .min(1, { error: TEXT_REQUIRED, abort: true })
+      .refine((text) => !exceedsGraphemes(text, MAX_TEXT_LENGTH), {
+        error: TEXT_TOO_LONG,
+        abort: true,
+      })
+      // 正規化すると空になる入力（空白や記号だけ）は比較できないので、リクエストの不備とする
+      .refine((text) => normalize(text).length > 0, { error: TEXT_NOTHING_TO_COMPARE }),
   },
   { error: TEXT_REQUIRED },
 );
