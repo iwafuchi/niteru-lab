@@ -1,19 +1,30 @@
+import { z } from "zod";
+
 // 入力の上限。形態素解析のコストと Lambda の実行時間を抑えるため
 export const MAX_TEXT_LENGTH = 1000;
+
+const TEXT_REQUIRED = "text は空でない文字列で指定してください";
+const TEXT_TOO_LONG = `text は ${MAX_TEXT_LENGTH} 文字以内で指定してください`;
+
+const tokenizeRequestSchema = z.object(
+  {
+    text: z
+      .string({ error: TEXT_REQUIRED })
+      .min(1, { error: TEXT_REQUIRED })
+      .refine((text) => !exceedsGraphemes(text, MAX_TEXT_LENGTH), { error: TEXT_TOO_LONG }),
+  },
+  { error: TEXT_REQUIRED },
+);
 
 export type ParseResult = { ok: true; text: string } | { ok: false; error: string };
 
 /** POST /tokenize のリクエストボディを検証する */
 export function parseTokenizeRequest(body: unknown): ParseResult {
-  const text = isRecord(body) ? body.text : undefined;
-
-  if (typeof text !== "string" || text.length === 0) {
-    return { ok: false, error: "text は空でない文字列で指定してください" };
+  const result = tokenizeRequestSchema.safeParse(body);
+  if (!result.success) {
+    return { ok: false, error: result.error.issues[0]?.message ?? TEXT_REQUIRED };
   }
-  if (exceedsGraphemes(text, MAX_TEXT_LENGTH)) {
-    return { ok: false, error: `text は ${MAX_TEXT_LENGTH} 文字以内で指定してください` };
-  }
-  return { ok: true, text };
+  return { ok: true, text: result.data.text };
 }
 
 const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
@@ -26,8 +37,4 @@ function exceedsGraphemes(text: string, max: number): boolean {
     if (graphemes.next().done) return false;
   }
   return true;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
