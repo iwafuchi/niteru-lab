@@ -134,9 +134,15 @@ test/
 ├─ unit/          純粋な関数のテスト
 ├─ integration/   辞書や HTTP 層を組み合わせたテスト
 └─ e2e/           デプロイ済み環境へのテスト
+docs/             規約と設計の判断の記録
 ```
 
 ### ルール
 
-- コミットメッセージ：[CONTRIBUTING.md](CONTRIBUTING.md)（Conventional Commits。本文に変更の理由と判断を書く）
-- テスト：[test/README.md](test/README.md)（テストピラミッド。テストを仕様のガードとして書く）
+規約と設計の判断の記録は [docs/](docs/README.md) にまとめています。
+
+- コミットメッセージ：[docs/commit.md](docs/commit.md)（Conventional Commits。本文に変更の理由と判断を書く）
+- ブランチと PR：[docs/pull-request.md](docs/pull-request.md)
+- テスト：[docs/testing.md](docs/testing.md)（テストピラミッド。テストを仕様のガードとして書く）
+- 依存関係：[docs/dependencies.md](docs/dependencies.md)（Dependabot、チェックサムによる固定）
+- 設計の判断：[docs/decisions/](docs/decisions/README.md)
