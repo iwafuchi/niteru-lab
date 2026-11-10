@@ -94,7 +94,7 @@ curl -X POST http://localhost:3000/tokenize \
 | `GET`    | `/health`   | 稼働確認。`{"status":"ok"}` を返す              |
 | `POST`   | `/tokenize` | `text` を形態素解析し、読みと形態素の一覧を返す |
 
-`POST /tokenize` の `text` は 1〜1000 文字です。文字数は見た目の 1 文字（書記素）単位で数えます。条件を満たさない場合は `400` と `{"error": "..."}` を返します。辞書にない語（英字など）は、表記をそのまま読みとして返します。
+`POST /tokenize` の `text` は 1〜1000 文字で、空白や記号以外の文字か数字を 1 文字以上含む必要があります。文字数は見た目の 1 文字（書記素）単位で数えます。条件を満たさない場合は `400` と `{"error": "..."}` を返します。辞書にない語（英字など）は、表記をそのまま読みとして返します。
 
 ## 開発
 
@@ -125,8 +125,11 @@ src/
 ├─ app.ts         ルーティング（実行環境に依存しない）
 ├─ local.ts       ローカル開発用のエントリポイント
 ├─ lambda.ts      Lambda 用のエントリポイント
+├─ normalize.ts   正規化（NFKC・小文字化・空白と記号の除去）
 ├─ tokenizer.ts   kuromoji による形態素解析
-└─ validation.ts  入力検証
+├─ reading.ts     比較用の読み（カタカナ）への変換と、2 つの文の比較
+├─ similarity.ts  読みの n-gram による類似度（Jaccard 係数）
+└─ validation.ts  入力検証（zod）
 test/
 ├─ unit/          純粋な関数のテスト
 ├─ integration/   辞書や HTTP 層を組み合わせたテスト
