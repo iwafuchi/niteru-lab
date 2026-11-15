@@ -12,12 +12,14 @@ AWS CDK と GitHub Actions の学習用プロジェクト。概要は README.md 
 | テスト               | [docs/testing.md](docs/testing.md)           |
 | 依存の追加・更新     | [docs/dependencies.md](docs/dependencies.md) |
 | 設計・技術選定の判断 | [docs/decisions/](docs/decisions/README.md)  |
+| PR を作る前の確認    | [docs/review.md](docs/review.md)             |
 
 ## コマンド
 
 mise が有効化されていないシェル（bash など）では、`~/.local/bin/mise exec --` を前に付けて実行する。
 
 ```bash
+pnpm check       # 整形の確認・Lint・型チェック・テスト・cdk synth をまとめて実行
 pnpm test        # unit + integration
 pnpm lint        # 型情報を使う Lint
 pnpm typecheck
@@ -26,6 +28,14 @@ pnpm dev         # ローカルで API を起動
 pnpm floci:up    # ローカルの AWS エミュレーター（Floci）を起動。止めるときは floci:down
 pnpm cdk:local deploy  # CDK を Floci に向けて実行（本物の AWS には向かない）
 ```
+
+## 作業のループ
+
+PR を作る前に、指摘がなくなるまで次を繰り返す（詳しくは [docs/review.md](docs/review.md)）。
+
+1. `pnpm check` を実行する。失敗したら直して、もう一度実行する
+2. 差分全体（`git diff main...HEAD`）を docs/review.md の観点表で読み直し、code-review スキル（`/code-review`）で不具合を探す
+3. 指摘があれば直して 1 に戻る。なければ PR を作り、「確認したこと」に `pnpm check` の結果とセルフレビューで直したことを書く
 
 ## Claude Code が守ること
 
