@@ -23,6 +23,8 @@ pnpm lint        # 型情報を使う Lint
 pnpm typecheck
 pnpm format
 pnpm dev         # ローカルで API を起動
+pnpm floci:up    # ローカルの AWS エミュレーター（Floci）を起動。止めるときは floci:down
+pnpm cdk:local deploy  # CDK を Floci に向けて実行（本物の AWS には向かない）
 ```
 
 ## Claude Code が守ること
