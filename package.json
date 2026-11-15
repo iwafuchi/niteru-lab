@@ -19,6 +19,8 @@
     "floci:up": "docker compose up -d --wait",
     "floci:down": "scripts/floci-down.sh",
     "cdk:local": "scripts/cdk-local.sh",
+    "synth": "scripts/cdk-local.sh synth --quiet",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm synth",
     "prepare": "lefthook install"
   },
   "dependencies": {
