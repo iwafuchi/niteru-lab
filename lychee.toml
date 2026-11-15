@@ -1,0 +1,6 @@
+# lychee（Markdown などのリンク切れの検査）の設定。pnpm check:links から使う
+
+# 外部の URL には接続せず、リポジトリ内の相対リンク（ファイルの存在）だけを検査する。
+# 外部のサイトの都合で CI が落ちないようにするためと、検査の度に外部へ通信しないため
+offline = true
+no_progress = true

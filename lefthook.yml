@@ -18,6 +18,10 @@ pre-commit:
       glob: "*.{ts,mts,cts,js,mjs,cjs}"
       run: pnpm exec oxlint --type-aware --deny-warnings {staged_files}
 
+    - name: shell
+      glob: "{*.sh,.lefthookrc}"
+      run: shellcheck {staged_files}
+
 # コミットメッセージの検査（{1} はメッセージが書かれたファイルのパス）
 commit-msg:
   jobs:
