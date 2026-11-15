@@ -34,7 +34,7 @@ pnpm cdk:local deploy  # CDK を Floci に向けて実行（本物の AWS には
 PR を作る前に、指摘がなくなるまで次を繰り返す（詳しくは [docs/review.md](docs/review.md)）。
 
 1. `pnpm check` を実行する。失敗したら直して、もう一度実行する
-2. 差分全体（`git diff main...HEAD`）を docs/review.md の観点表で読み直し、code-review スキル（`/code-review`）で不具合を探す
+2. 差分全体（`git diff main...HEAD` と、未コミットの `git diff HEAD`）を docs/review.md の観点表で読み直し、code-review スキル（`/code-review`）で不具合を探す
 3. 指摘があれば直して 1 に戻る。なければ PR を作り、「確認したこと」に `pnpm check` の結果とセルフレビューで直したことを書く
 
 ## Claude Code が守ること
