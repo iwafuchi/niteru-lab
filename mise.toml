@@ -2,6 +2,10 @@
 gitleaks = "8.30.1"
 node = "24"
 pnpm = "12"
+shellcheck = "0.11.0"
+# lychee の gnu 版は glibc 2.38 以降が必要で、WSL（Ubuntu 22.04、glibc 2.35）では動かない。
+# 静的にリンクされた musl 版を GitHub のリリースから直接使う
+"github:lycheeverse/lychee" = { version = "0.24.2", version_prefix = "lychee-v", asset_pattern = "lychee-x86_64-unknown-linux-musl.tar.gz" }
 
 [settings]
 # mise.lock に記録したバージョンとチェックサム以外ではツールを入れない
