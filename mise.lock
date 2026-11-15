@@ -2,6 +2,21 @@
 
 lockfile_version = 4
 
+[[tools."github:lycheeverse/lychee"]]
+version = "0.24.2"
+backend = "github:lycheeverse/lychee"
+specifiers = ["0.24.2"]
+
+[tools."github:lycheeverse/lychee".options]
+asset_pattern = "lychee-x86_64-unknown-linux-musl.tar.gz"
+version_prefix = "lychee-v"
+
+[tools."github:lycheeverse/lychee"."platforms.linux-x64"]
+checksum = "sha256:73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"
+checksum_source = "mise-versions"
+url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409959271"
+
 [[tools.gitleaks]]
 version = "8.30.1"
 backend = "aqua:gitleaks/gitleaks"
@@ -32,3 +47,14 @@ checksum = "sha256:3726060e236c0db3e7124c0a5af123c840ba0cb76682149b63ea0baf29001
 url = "https://github.com/pnpm/pnpm/releases/download/v12.18.0/pnpm-linux-x64.tar.gz"
 url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/711505542"
 provenance = "github-attestations"
+
+[[tools.shellcheck]]
+version = "0.11.0"
+backend = "aqua:koalaman/shellcheck"
+specifiers = ["0.11.0"]
+
+[tools.shellcheck."platforms.linux-x64"]
+checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+checksum_source = "mise-versions"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056942"
