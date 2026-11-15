@@ -11,5 +11,22 @@
     "builtin": true,
     "node": true
   },
+  "overrides": [
+    {
+      "files": ["infra/**/*.ts"],
+      "rules": {
+        "no-new": "off"
+      }
+    },
+    {
+      "files": ["test/**/*.ts"],
+      "rules": {
+        "vitest/expect-expect": [
+          "error",
+          { "assertFunctionNames": ["expect", "expect.*", "template.*"] }
+        ]
+      }
+    }
+  ],
   "ignorePatterns": ["cdk.out/**", "coverage/**", "dist/**"]
 }
