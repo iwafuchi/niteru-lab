@@ -16,6 +16,7 @@ npm パッケージ、GitHub Actions、`compose.yaml` の Docker イメージは
 - マイナー・パッチ更新は 1 つの PR にまとめ、メジャー更新はパッケージごとに個別の PR になる
 - コミットメッセージは `build(deps): bump ...` / `ci(deps): bump ...` の形式で自動生成されます。body には更新内容（リリースノートへのリンクなど）が入るので、そのまま受け入れます
 - マージする前に、CI の成功とリリースノートの破壊的変更を確認します。とくにメジャー更新と、0.x のパッケージ（oxfmt など）の更新に注意します
+- Dependabot の cooldown は更新する依存そのものにだけ効く。間接的な依存が公開 7 日以内の版に解決されると、CI の `pnpm install --frozen-lockfile` が `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` で失敗する。その場合は `minimumReleaseAgeExclude` で回避せず、7 日たってから Dependabot に作り直させる（PR の `@dependabot recreate`）
 - `mise.toml` のツール（Node.js・pnpm・gitleaks）は Dependabot の対象外です。手動で更新します
 
 ## バージョンとチェックサムの固定
