@@ -1,5 +1,6 @@
 {
   "app": "tsx infra/bin/app.ts",
+  "versionReporting": false,
   "context": {
     "cli-telemetry": false
   }

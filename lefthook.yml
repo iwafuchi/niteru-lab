@@ -41,3 +41,8 @@ pre-push:
     - name: test
       glob: "*.{ts,mts,cts,json}"
       run: pnpm test
+
+    # CDK のアプリがテンプレートを生成できるか（バンドルの失敗などを CI より先に見つける）
+    - name: synth
+      glob: "*.{ts,mts,cts,json}"
+      run: pnpm synth
