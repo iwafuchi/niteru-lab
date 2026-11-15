@@ -47,6 +47,7 @@ PR を作る前に、指摘がなくなるまで次を繰り返す（詳しく�
 ## コード
 
 - TypeScript は型チェック専用（`noEmit`）。ビルドは esbuild（CDK）と tsx が行う
+- シェルスクリプトには拡張子 `.sh` を付ける（`pnpm lint:shell` が git で管理している `*.sh` を shellcheck で検査するため）
 - `enum` や `namespace` は使わない（`erasableSyntaxOnly`）。型だけの import は `import type`
 - 認証情報と AWS のアカウント ID をコード・コミットメッセージ・PR の本文に書かない。API キーは SSM Parameter Store、AWS の認証は OIDC。本物のアカウント ID は gitleaks（`.gitleaks.toml`）が検出する
 - API の仕様の正はテスト（`test/integration/app.test.ts`、`test/unit/validation.test.ts`）。入力検証の方針は [0001](docs/decisions/0001-input-validation.md)
