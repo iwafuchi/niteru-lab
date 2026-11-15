@@ -1,0 +1,12 @@
+# ローカルの AWS エミュレーター（Floci）。判断の記録は docs/decisions/0002-local-aws-emulator.md
+# 起動・停止は pnpm floci:up / pnpm floci:down を使う（停止時に Lambda のコンテナも片付けるため）
+services:
+  floci:
+    # タグは付け替えられるため digest で固定する（2.4.0）。更新は Dependabot が行う
+    image: floci/floci:2.4.0@sha256:5ee85db604c4aa74ac76e07ea5cc83086f37bb472bf3dbb97e34019e48efae9c
+    ports:
+      # 外部から接続されないよう、ホストの 127.0.0.1 にだけ公開する
+      - "127.0.0.1:4566:4566"
+    volumes:
+      # Lambda を本物の実行環境のコンテナで動かすために、ホストの Docker を使わせる
+      - /var/run/docker.sock:/var/run/docker.sock

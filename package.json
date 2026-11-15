@@ -16,6 +16,8 @@
     "test:integration": "vitest run --project integration",
     "test:e2e": "vitest run --project e2e",
     "test:watch": "vitest --project unit --project integration",
+    "floci:up": "docker compose up -d --wait",
+    "floci:down": "scripts/floci-down.sh",
     "prepare": "lefthook install"
   },
   "dependencies": {

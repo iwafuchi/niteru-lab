@@ -48,7 +48,7 @@ flowchart LR
 ## 必要なもの
 
 - [mise](https://mise.jdx.dev/)：Node.js・pnpm・gitleaks のバージョンを `mise.toml` で固定しています
-- Docker：AWS のローカルエミュレーター（[Floci](https://floci.io/)）で S3 などを試すときに使います（予定）
+- Docker：AWS のローカルエミュレーター（[Floci](https://floci.io/)）を動かすときに使います
 
 ## セットアップ
 
@@ -98,15 +98,29 @@ curl -X POST http://localhost:3000/tokenize \
 
 ## 開発
 
-| コマンド                                           | 内容                                                          |
-| -------------------------------------------------- | ------------------------------------------------------------- |
-| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000） |
-| `pnpm test`                                        | unit と integration のテストを実行                            |
-| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                          |
-| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                  |
-| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                         |
-| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                               |
-| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                    |
+| コマンド                                           | 内容                                                                                            |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                   |
+| `pnpm test`                                        | unit と integration のテストを実行                                                              |
+| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                            |
+| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                    |
+| `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除） |
+| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                           |
+| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                                                                 |
+| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                                                      |
+
+### ローカルの AWS エミュレーター
+
+[Floci](https://github.com/floci-io/floci) で S3・SSM・Lambda などをローカルで動かせます（選んだ理由は [docs/decisions/0002](docs/decisions/0002-local-aws-emulator.md)）。
+
+```bash
+pnpm floci:up
+export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=us-east-1
+aws s3 ls
+pnpm floci:down
+```
+
+IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。
 
 ### 品質を保つ仕組み
 
