@@ -1,0 +1,23 @@
+# gitleaks の設定。コミット時のフック（lefthook）と CI の Secret scan の両方で使われる。
+# 仕様は test/integration/gitleaks.test.ts
+title = "niteru-lab"
+# [[rules.allowlists]] の書き方が使えるのは v8.21.0 から
+minVersion = "v8.21.0"
+
+# gitleaks に組み込みの標準のルール（API キー、トークンなど）はそのまま使う
+[extend]
+useDefault = true
+
+# 標準のルールは AWS のアカウント ID を検出しない。アカウント ID は秘密情報ではないが、
+# 公開リポジトリに書くと攻撃の足がかり（アカウントの特定、IAM ロール名の推測）になるため検出する
+[[rules]]
+id = "aws-account-id"
+description = "AWS のアカウント ID（ARN、account の値、aws:// の環境指定）"
+regex = '''(?i)(?:arn:aws[a-z-]*:[a-z0-9-]*:[a-z0-9-]*:|aws://|\b(?:aws_?)?account(?:_?id)?["']?\s*[:=]\s*["']?)(\d{12})\b'''
+secretGroup = 1
+keywords = ["arn:aws", "aws://", "account"]
+
+# Floci（ローカルの AWS エミュレーター）のダミーのアカウントは本物ではないので許可する
+[[rules.allowlists]]
+description = "Floci のダミーのアカウント"
+regexes = ['''^0{12}$''']
