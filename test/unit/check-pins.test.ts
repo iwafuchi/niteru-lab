@@ -9,8 +9,14 @@ function validInput() {
   return {
     packageJson: {
       packageManager: `pnpm@12.18.0+sha512.${PNPM_SHA512}`,
-      dependencies: { hono: "4.13.17" },
-      devDependencies: { "aws-cdk-lib": "2.275.0", "@types/node": "^24.19.2" },
+      devEngines: { packageManager: { name: "pnpm", version: "12.18.0" } },
+      dependencies: { hono: "4.13.17" } as Record<string, string>,
+      devDependencies: { "aws-cdk-lib": "2.275.0", "@types/node": "^24.19.2" } as Record<
+        string,
+        string
+      >,
+      optionalDependencies: {} as Record<string, string>,
+      pnpm: { overrides: {} as Record<string, string> },
     },
     compose: `services:\n  floci:\n    image: floci/floci:2.4.0@sha256:${IMAGE_SHA256}\n`,
   };
@@ -50,10 +56,38 @@ describe("依存の固定の検査", () => {
       expect(findPinViolations(input)).toEqual([]);
     });
 
-    test("例外として許可した @types/node だけは ^ 付きでもよい（Node.js 24 の型の範囲で更新するため）", () => {
+    test("optionalDependencies と pnpm.overrides も同じく検査する", () => {
       const input = validInput();
-      input.packageJson.devDependencies["@types/node"] = "^24.19.2";
-      expect(findPinViolations(input)).toEqual([]);
+      input.packageJson.optionalDependencies["fsevents"] = "^2.3.3";
+      input.packageJson.pnpm.overrides["esbuild"] = "^0.28.2";
+      expect(findPinViolations(input)).toEqual([
+        "optionalDependencies の fsevents が完全に固定されていない: ^2.3.3",
+        "pnpm.overrides の esbuild が完全に固定されていない: ^0.28.2",
+      ]);
+    });
+
+    test("Object のプロトタイプと同じ名前の依存も、例外扱いせずに検査する", () => {
+      const input = validInput();
+      input.packageJson.dependencies["constructor"] = "^1.0.0";
+      expect(findPinViolations(input)).toEqual([
+        "dependencies の constructor が完全に固定されていない: ^1.0.0",
+      ]);
+    });
+
+    describe("@types/node は Node.js 24 の型の範囲（^24.x.y）だけを例外として許す", () => {
+      test.each(["^24.19.2", "^24.20.0", "24.19.2"])("%s は許す", (version) => {
+        const input = validInput();
+        input.packageJson.devDependencies["@types/node"] = version;
+        expect(findPinViolations(input)).toEqual([]);
+      });
+
+      test.each(["^25.0.0", "^22.0.0", "latest", "*", "~24.19.2"])("%s は違反になる", (version) => {
+        const input = validInput();
+        input.packageJson.devDependencies["@types/node"] = version;
+        expect(findPinViolations(input)).toEqual([
+          `devDependencies の @types/node が完全に固定されていない: ${version}`,
+        ]);
+      });
     });
   });
 
@@ -69,6 +103,14 @@ describe("依存の固定の検査", () => {
         `packageManager がバージョンと sha512 で固定されていない: ${packageManager}`,
       ]);
     });
+  });
+
+  test("devEngines の pnpm のバージョンが packageManager と違えば違反になる", () => {
+    const input = validInput();
+    input.packageJson.devEngines.packageManager.version = "12.17.0";
+    expect(findPinViolations(input)).toEqual([
+      "devEngines の pnpm のバージョン（12.17.0）が packageManager（12.18.0）と一致しない",
+    ]);
   });
 
   describe("compose.yaml の Docker イメージ", () => {
