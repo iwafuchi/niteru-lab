@@ -17,7 +17,8 @@ regex = '''(?i)(?:arn:aws[a-z-]*:[a-z0-9-]*:[a-z0-9-]*:|aws://|\b(?:aws_?)?accou
 secretGroup = 1
 keywords = ["arn:aws", "aws://", "account"]
 
-# Floci（ローカルの AWS エミュレーター）のダミーのアカウントは本物ではないので許可する
+# Floci（ローカルの AWS エミュレーター）のダミーのアカウントは本物ではないので許可する。
+# gitleaks 8.30.1 は同じ数字の繰り返しをもともと報告しないが、その挙動に依存しないよう明示する
 [[rules.allowlists]]
 description = "Floci のダミーのアカウント"
 regexes = ['''^0{12}$''']
