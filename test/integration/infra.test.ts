@@ -11,7 +11,7 @@ describe("NiteruLabStack", () => {
   beforeAll(() => {
     const app = new App();
     const stack = new NiteruLabStack(app, "Test", {
-      env: { account: "000000000000", region: "us-east-1" },
+      env: { account: "000000000000", region: "ap-northeast-1" },
     });
     template = Template.fromStack(stack);
   });

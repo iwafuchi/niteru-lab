@@ -10,3 +10,6 @@ services:
     volumes:
       # Lambda を本物の実行環境のコンテナで動かすために、ホストの Docker を使わせる
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # 本物の AWS で使う予定の東京リージョンにそろえる（Floci の既定は us-east-1）
+      FLOCI_DEFAULT_REGION: ap-northeast-1
