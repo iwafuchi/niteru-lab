@@ -98,16 +98,17 @@ curl -X POST http://localhost:3000/tokenize \
 
 ## 開発
 
-| コマンド                                           | 内容                                                                                            |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                   |
-| `pnpm test`                                        | unit と integration のテストを実行                                                              |
-| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                            |
-| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                    |
-| `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除） |
-| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                           |
-| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                                                                 |
-| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                                                      |
+| コマンド                                           | 内容                                                                                              |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                     |
+| `pnpm test`                                        | unit と integration のテストを実行                                                                |
+| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                              |
+| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                      |
+| `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除）   |
+| `pnpm cdk:local <コマンド>`                        | CDK を Floci に向けて実行（例：`pnpm cdk:local deploy`）。認証情報は Floci 用のダミーに差し替える |
+| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                             |
+| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                                                                   |
+| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                                                        |
 
 ### ローカルの AWS エミュレーター
 
@@ -115,12 +116,26 @@ curl -X POST http://localhost:3000/tokenize \
 
 ```bash
 pnpm floci:up
-export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=us-east-1
-aws s3 ls
+pnpm cdk:local bootstrap aws://000000000000/us-east-1   # 起動するたびに 1 回
+pnpm cdk:local deploy
 pnpm floci:down
 ```
 
-IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。
+`deploy` の出力に Function URL が表示されます（例：`http://xxxx.lambda-url.us-east-1.localhost:4566/`）。
+
+```bash
+curl -X POST http://xxxx.lambda-url.us-east-1.localhost:4566/tokenize \
+  -H 'content-type: application/json' -d '{"text":"夜に駆ける"}'
+```
+
+AWS CLI で Floci を操作するときは、接続先と認証情報を Floci 用にします。
+
+```bash
+export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=us-east-1
+aws lambda list-functions
+```
+
+Floci は状態をメモリに持つため、停止するとデプロイしたものも bootstrap も消えます。IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。
 
 ### 品質を保つ仕組み
 
@@ -144,6 +159,10 @@ src/
 ├─ reading.ts     比較用の読み（カタカナ）への変換と、2 つの文の比較
 ├─ similarity.ts  読みの n-gram による類似度（Jaccard 係数）
 └─ validation.ts  入力検証（zod）
+infra/
+├─ bin/app.ts     CDK アプリ（デプロイ先を選ぶ）
+└─ lib/           スタックの定義（Lambda と Function URL）
+scripts/          Floci の停止、CDK を Floci に向ける実行スクリプト
 test/
 ├─ unit/          純粋な関数のテスト
 ├─ integration/   辞書や HTTP 層を組み合わせたテスト

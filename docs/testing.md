@@ -11,11 +11,11 @@
       ▲▲▲▲▲ unit        多い・速い・純粋な関数
 ```
 
-| ディレクトリ        | 対象                                                 | 実行                    |
-| ------------------- | ---------------------------------------------------- | ----------------------- |
-| `test/unit/`        | I/O を伴わない純粋な関数（入力検証、正規化、n-gram） | `pnpm test:unit`        |
-| `test/integration/` | kuromoji の辞書、Hono の HTTP 層、Floci 上の S3/SSM  | `pnpm test:integration` |
-| `test/e2e/`         | デプロイ済みの Dev 環境の Function URL               | `pnpm test:e2e`         |
+| ディレクトリ        | 対象                                                                    | 実行                    |
+| ------------------- | ----------------------------------------------------------------------- | ----------------------- |
+| `test/unit/`        | I/O を伴わない純粋な関数（入力検証、正規化、n-gram）                    | `pnpm test:unit`        |
+| `test/integration/` | kuromoji の辞書、Hono の HTTP 層、CDK のテンプレート、Floci 上の S3/SSM | `pnpm test:integration` |
+| `test/e2e/`         | デプロイ済みの Dev 環境の Function URL                                  | `pnpm test:e2e`         |
 
 `pnpm test` は unit と integration を実行します。e2e は AWS の認証情報とデプロイ済みの環境が必要なので、明示的に実行したときだけ動きます。
 
@@ -24,6 +24,7 @@
 - 境界値や組み合わせの多い検証は、ロジックを純粋な関数に切り出して **unit** で網羅する
 - **integration** では、部品をつないだときの振る舞い（ステータスコード、レスポンスの形）を代表的なケースで確認する。unit で確認済みの境界値を繰り返さない
 - **e2e** では、本物の環境でしか確認できないこと（IAM 認証、Lambda の初期化、S3 の権限）だけを確認する
+- インフラ（CDK）は、生成した CloudFormation テンプレートを `aws-cdk-lib/assertions` で検証する。Floci は IAM 認証を検証しないため、認証の設定などセキュリティに関わる仕様は、ここで必ずテストに書く
 
 ## 仕様のガードとして書くためのルール
 
