@@ -12,6 +12,7 @@ if (target !== "local") {
 }
 
 new NiteruLabStack(app, "NiteruLab-Local", {
-  // Floci の既定のアカウントとリージョン
-  env: { account: "000000000000", region: "us-east-1" },
+  // Floci のアカウント（既定値）と、compose.yaml で指定したリージョン。
+  // 本物の AWS で使う予定の東京リージョンにそろえる
+  env: { account: "000000000000", region: "ap-northeast-1" },
 });

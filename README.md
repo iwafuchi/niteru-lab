@@ -116,22 +116,22 @@ curl -X POST http://localhost:3000/tokenize \
 
 ```bash
 pnpm floci:up
-pnpm cdk:local bootstrap aws://000000000000/us-east-1   # 起動するたびに 1 回
+pnpm cdk:local bootstrap aws://000000000000/ap-northeast-1   # 起動するたびに 1 回
 pnpm cdk:local deploy
 pnpm floci:down
 ```
 
-`deploy` の出力に Function URL が表示されます（例：`http://xxxx.lambda-url.us-east-1.localhost:4566/`）。
+`deploy` の出力に Function URL が表示されます（例：`http://xxxx.lambda-url.ap-northeast-1.localhost:4566/`）。
 
 ```bash
-curl -X POST http://xxxx.lambda-url.us-east-1.localhost:4566/tokenize \
+curl -X POST http://xxxx.lambda-url.ap-northeast-1.localhost:4566/tokenize \
   -H 'content-type: application/json' -d '{"text":"夜に駆ける"}'
 ```
 
 AWS CLI で Floci を操作するときは、接続先と認証情報を Floci 用にします。
 
 ```bash
-export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=us-east-1
+export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=ap-northeast-1
 aws lambda list-functions
 ```
 
