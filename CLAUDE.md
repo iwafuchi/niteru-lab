@@ -19,7 +19,7 @@ AWS CDK と GitHub Actions の学習用プロジェクト。概要は README.md 
 mise が有効化されていないシェル（bash など）では、`~/.local/bin/mise exec --` を前に付けて実行する。
 
 ```bash
-pnpm check       # 整形の確認・Lint・型チェック・テスト・cdk synth をまとめて実行
+pnpm check       # 整形の確認・Lint・型チェック・依存の固定・テスト・cdk synth（と結果の検査）をまとめて実行
 pnpm test        # unit + integration
 pnpm lint        # 型情報を使う Lint
 pnpm typecheck

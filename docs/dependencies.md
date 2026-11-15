@@ -2,7 +2,9 @@
 
 ## 追加するとき
 
-- npm パッケージはバージョンを固定して追加する（`pnpm add -E`）。`^` や `~` は付けない
+- npm パッケージはバージョンを固定して追加する。[pnpm-workspace.yaml](../pnpm-workspace.yaml) の `saveExact: true` により、`pnpm add` は `^` や `~` を付けずに書き込む
+- 公開から 7 日たっていないバージョンは、`minimumReleaseAge` により pnpm が選ばない（間接的な依存も含む）。pnpm はインストールのたびに lockfile もこの条件で検証するため、CI の `pnpm install --frozen-lockfile` でも違反は止まる。どうしても新しい版が必要なら、理由を書いて `minimumReleaseAgeExclude` に加える
+- 完全に固定しない例外（今は `@types/node` だけ）は、[scripts/check-pins.ts](../scripts/check-pins.ts) の `RANGE_ALLOWED` に理由と一緒に書く
 - インストール時にスクリプトを実行するパッケージ（postinstall など）は、pnpm が標準でブロックする。必要かどうかを判断し、[pnpm-workspace.yaml](../pnpm-workspace.yaml) の `allowBuilds` で許可・拒否を明示する
 - ワークフローの `uses:` を追加・変更したら `gh actions-lock` で `.github/workflows/actions.lock` を更新し、`gh actions-lock --verify` で確認する。lockfile は手で編集しない
 
@@ -17,6 +19,8 @@ npm パッケージ、GitHub Actions、`compose.yaml` の Docker イメージは
 - `mise.toml` のツール（Node.js・pnpm・gitleaks）は Dependabot の対象外です。手動で更新します
 
 ## バージョンとチェックサムの固定
+
+`pnpm check`（`pnpm check:pins`）が、package.json の依存が完全に固定されていること、`packageManager` に sha512 があること、`compose.yaml` のイメージに digest があることを検査します。
 
 取得するものはすべて、バージョンに加えてチェックサム（またはコミット SHA）で固定します。
 同じバージョン番号のまま中身が差し替えられる攻撃を防ぐためです。
