@@ -47,7 +47,7 @@ flowchart LR
 
 ## 必要なもの
 
-- [mise](https://mise.jdx.dev/)：Node.js・pnpm・gitleaks のバージョンを `mise.toml` で固定しています
+- [mise](https://mise.jdx.dev/)：Node.js・pnpm・gitleaks・shellcheck・lychee のバージョンを `mise.toml` と `mise.lock` で固定しています
 - Docker：AWS のローカルエミュレーター（[Floci](https://floci.io/)）を動かすときに使います
 
 ## セットアップ
@@ -98,19 +98,20 @@ curl -X POST http://localhost:3000/tokenize \
 
 ## 開発
 
-| コマンド                                           | 内容                                                                                                             |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                                    |
-| `pnpm check`                                       | 整形の確認・Lint・型チェック・依存の固定・テスト・`cdk synth`（と結果の検査）をまとめて実行（PR を作る前に通す） |
-| `pnpm check:pins`                                  | 依存がバージョンとチェックサム（digest）で固定されているかを検査                                                 |
-| `pnpm test`                                        | unit と integration のテストを実行                                                                               |
-| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                                             |
-| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                                     |
-| `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除）                  |
-| `pnpm cdk:local <コマンド>`                        | CDK を Floci に向けて実行（例：`pnpm cdk:local deploy`）。認証情報は Floci 用のダミーに差し替える                |
-| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                                            |
-| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                                                                                  |
-| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                                                                       |
+| コマンド                                           | 内容                                                                                                                                       |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                                                              |
+| `pnpm check`                                       | 整形の確認・Lint（コード、シェル、リンク）・型チェック・依存の固定・テスト・`cdk synth`（と結果の検査）をまとめて実行（PR を作る前に通す） |
+| `pnpm check:pins`                                  | 依存がバージョンとチェックサム（digest）で固定されているかを検査                                                                           |
+| `pnpm test`                                        | unit と integration のテストを実行                                                                                                         |
+| `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                                                                       |
+| `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                                                               |
+| `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除）                                            |
+| `pnpm cdk:local <コマンド>`                        | CDK を Floci に向けて実行（例：`pnpm cdk:local deploy`）。認証情報は Floci 用のダミーに差し替える                                          |
+| `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                                                                      |
+| `pnpm lint:shell` / `lint:links`                   | シェルスクリプトの静的解析（shellcheck）/ Markdown の相対リンク切れの検査（lychee、外部には接続しない）                                    |
+| `pnpm format` / `format:check`                     | 整形（oxfmt）/ 整形済みかの確認                                                                                                            |
+| `pnpm typecheck`                                   | 型チェック（TypeScript 7）                                                                                                                 |
 
 ### ローカルの AWS エミュレーター
 
@@ -143,12 +144,12 @@ Floci は状態をメモリに持つため、停止するとデプロイした�
 
 同じ検査をローカルと CI の両方で実行します。ローカルの git hooks は `--no-verify` で飛ばせるため、CI が最終的なガードです。
 
-| タイミング     | 検査                                                                                                                                                         |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| コミット時     | 秘密情報と AWS のアカウント ID（gitleaks）、整形、Lint、コミットメッセージ（commitlint）                                                                     |
-| push 時        | 型チェック、テスト、`cdk synth`                                                                                                                              |
-| PR を作る前    | `pnpm check`（整形の確認、Lint、型チェック、依存の固定、テスト、`cdk synth` と結果の検査）と、観点表によるセルフレビュー（[docs/review.md](docs/review.md)） |
-| CI（PR・main） | `pnpm check` と同じ検査、秘密情報、コミットメッセージ。`main` へのマージには CI の成功が必須                                                                 |
+| タイミング     | 検査                                                                                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| コミット時     | 秘密情報と AWS のアカウント ID（gitleaks）、整形、Lint、コミットメッセージ（commitlint）                                                                                               |
+| push 時        | 型チェック、テスト、`cdk synth`                                                                                                                                                        |
+| PR を作る前    | `pnpm check`（整形の確認、Lint（コード、シェル、リンク）、型チェック、依存の固定、テスト、`cdk synth` と結果の検査）と、観点表によるセルフレビュー（[docs/review.md](docs/review.md)） |
+| CI（PR・main） | `pnpm check` と同じ検査、秘密情報、コミットメッセージ。`main` へのマージには CI の成功が必須                                                                                           |
 
 ### ディレクトリ構成
 
