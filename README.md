@@ -101,6 +101,7 @@ curl -X POST http://localhost:3000/tokenize \
 | コマンド                                           | 内容                                                                                              |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `pnpm dev`                                         | ローカルで API を起動（ポートは環境変数 `PORT`、既定は 3000）                                     |
+| `pnpm check`                                       | 整形の確認・Lint・型チェック・テスト・`cdk synth` をまとめて実行（PR を作る前に通す）             |
 | `pnpm test`                                        | unit と integration のテストを実行                                                                |
 | `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                              |
 | `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                      |
@@ -141,11 +142,12 @@ Floci は状態をメモリに持つため、停止するとデプロイした�
 
 同じ検査をローカルと CI の両方で実行します。ローカルの git hooks は `--no-verify` で飛ばせるため、CI が最終的なガードです。
 
-| タイミング     | 検査                                                               |
-| -------------- | ------------------------------------------------------------------ |
-| コミット時     | 秘密情報（gitleaks）、整形、Lint、コミットメッセージ（commitlint） |
-| push 時        | 型チェック、テスト                                                 |
-| CI（PR・main） | 上記すべて。`main` へのマージには CI の成功が必須                  |
+| タイミング     | 検査                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| コミット時     | 秘密情報（gitleaks）、整形、Lint、コミットメッセージ（commitlint）                                         |
+| push 時        | 型チェック、テスト                                                                                         |
+| PR を作る前    | `pnpm check`（上記に加えて `cdk synth`）と、観点表によるセルフレビュー（[docs/review.md](docs/review.md)） |
+| CI（PR・main） | `pnpm check` と同じ検査、秘密情報、コミットメッセージ。`main` へのマージには CI の成功が必須               |
 
 ### ディレクトリ構成
 
@@ -176,6 +178,7 @@ docs/             規約と設計の判断の記録
 
 - コミットメッセージ：[docs/commit.md](docs/commit.md)（Conventional Commits。本文に変更の理由と判断を書く）
 - ブランチと PR：[docs/pull-request.md](docs/pull-request.md)
+- セルフレビュー：[docs/review.md](docs/review.md)
 - テスト：[docs/testing.md](docs/testing.md)（テストピラミッド。テストを仕様のガードとして書く）
 - 依存関係：[docs/dependencies.md](docs/dependencies.md)（Dependabot、チェックサムによる固定）
 - 設計の判断：[docs/decisions/](docs/decisions/README.md)
