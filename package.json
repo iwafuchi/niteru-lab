@@ -21,7 +21,7 @@
     "cdk:local": "scripts/cdk-local.sh",
     "synth": "scripts/cdk-local.sh synth --quiet && tsx scripts/check-synth.ts",
     "check:pins": "tsx scripts/check-pins.ts",
-    "lint:shell": "shellcheck scripts/*.sh .lefthookrc",
+    "lint:shell": "git ls-files -z '*.sh' .lefthookrc | xargs -0 shellcheck",
     "lint:links": "lychee .",
     "check": "pnpm format:check && pnpm lint && pnpm lint:shell && pnpm lint:links && pnpm typecheck && pnpm check:pins && pnpm test && pnpm synth",
     "prepare": "lefthook install"

@@ -4,3 +4,8 @@
 # 外部のサイトの都合で CI が落ちないようにするためと、検査の度に外部へ通信しないため
 offline = true
 no_progress = true
+
+# .github/ などの隠しディレクトリの Markdown も検査する（.gitignore にあるものは引き続き対象外）
+hidden = true
+# git の内部のファイルは対象外にする
+exclude_path = ["\\.git/"]
