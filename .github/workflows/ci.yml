@@ -30,7 +30,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # mise.toml に書いた Node / pnpm / gitleaks をローカルと同じバージョンで入れる
+      # mise.toml に書いたツール（Node / pnpm / gitleaks / shellcheck / lychee）をローカルと同じバージョンで入れる
       - uses: jdx/mise-action@v5.2.7
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
@@ -38,7 +38,7 @@ jobs:
           sha256: 0296d9cba9324106d4e0962bb94a2072902f3658813aeb3b09504947bb8ddc2b
 
       - run: pnpm install --frozen-lockfile
-      # ローカルで PR を作る前に通すものと同じ検査（整形の確認・Lint・型チェック・依存の固定・テスト・cdk synth）。
+      # ローカルで PR を作る前に通すものと同じ検査（整形の確認・Lint（コード、シェル、リンク）・型チェック・依存の固定・テスト・cdk synth）。
       # 検査の中身は package.json の check にだけ書き、ローカルと CI で食い違わないようにする
       - run: pnpm check
 
