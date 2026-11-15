@@ -38,7 +38,7 @@ jobs:
           sha256: 0296d9cba9324106d4e0962bb94a2072902f3658813aeb3b09504947bb8ddc2b
 
       - run: pnpm install --frozen-lockfile
-      # ローカルで PR を作る前に通すものと同じ検査（整形の確認・Lint・型チェック・テスト・cdk synth）。
+      # ローカルで PR を作る前に通すものと同じ検査（整形の確認・Lint・型チェック・依存の固定・テスト・cdk synth）。
       # 検査の中身は package.json の check にだけ書き、ローカルと CI で食い違わないようにする
       - run: pnpm check
 
