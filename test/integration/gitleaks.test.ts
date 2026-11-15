@@ -3,7 +3,8 @@ import path from "node:path";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const CONFIG = path.join(import.meta.dirname, "../../.gitleaks.toml");
+const ROOT = path.join(import.meta.dirname, "../..");
+const CONFIG = path.join(ROOT, ".gitleaks.toml");
 
 // 本物らしいアカウント ID やキーをファイルに直接書くと、このファイル自体が gitleaks に
 // 検出されるため、実行時に組み立てる
@@ -14,14 +15,16 @@ const LOCAL_ACCOUNT_ID = "000000000000";
 
 const reportSchema = z.array(z.looseObject({ RuleID: z.string() }));
 
-/** gitleaks に文字列を渡し、検出したルールの ID を返す */
-function scan(text: string): string[] {
+/**
+ * gitleaks に文字列を渡し、検出したルールの ID を返す。
+ * autoDiscover が true なら --config を渡さず、フックや CI と同じくリポジトリ直下の設定を自動で読ませる
+ */
+function scan(text: string, { autoDiscover = false } = {}): string[] {
   const result = spawnSync(
     "gitleaks",
     [
       "stdin",
-      "--config",
-      CONFIG,
+      ...(autoDiscover ? [] : ["--config", CONFIG]),
       "--no-banner",
       "--log-level",
       "error",
@@ -30,7 +33,7 @@ function scan(text: string): string[] {
       "--report-path",
       "-",
     ],
-    { input: text, encoding: "utf8" },
+    { input: text, encoding: "utf8", cwd: ROOT },
   );
   if (result.error) throw result.error;
   // 何も検出しなければ終了コード 0、検出すれば 1。それ以外は設定の誤りなど
@@ -48,9 +51,26 @@ describe("gitleaks で AWS のアカウント ID を検出する", () => {
       ["環境変数", `AWS_ACCOUNT_ID=${ACCOUNT_ID}`],
       ["JSON のキー", `{ "accountId": "${ACCOUNT_ID}" }`],
       ["cdk bootstrap の環境指定", `cdk bootstrap aws://${ACCOUNT_ID}/ap-northeast-1`],
+      ["CDK の標準の環境変数", `CDK_DEFAULT_ACCOUNT=${ACCOUNT_ID}`],
+      ["ハイフン区切りのキー", `account-id: ${ACCOUNT_ID}`],
+      ["コマンドの引数", `aws organizations describe-account --account ${ACCOUNT_ID}`],
+      ["CDK の bootstrap のバケット名", `cdk-hnb659fds-assets-${ACCOUNT_ID}-ap-northeast-1`],
+      ["CDK の bootstrap のロール名", `cdk-hnb659fds-deploy-role-${ACCOUNT_ID}-ap-northeast-1`],
     ])("%sのアカウント ID", (_label, text) => {
       expect(scan(text)).toEqual(["aws-account-id"]);
     });
+
+    test("ECR のレジストリのホスト名にあるアカウント ID", () => {
+      expect(scan(`${ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/niteru-lab`)).toEqual([
+        "aws-account-id-ecr",
+      ]);
+    });
+  });
+
+  test("--config を渡さなくても、リポジトリ直下の設定が自動で読まれる（フックと CI は渡さない）", () => {
+    expect(scan(`arn:aws:iam::${ACCOUNT_ID}:role/deployer`, { autoDiscover: true })).toEqual([
+      "aws-account-id",
+    ]);
   });
 
   describe("検出しない", () => {
@@ -58,6 +78,7 @@ describe("gitleaks で AWS のアカウント ID を検出する", () => {
       ["ARN の中", `arn:aws:iam::${LOCAL_ACCOUNT_ID}:role/deployer`],
       ["CDK の env", `env: { account: "${LOCAL_ACCOUNT_ID}", region: "ap-northeast-1" }`],
       ["cdk bootstrap の環境指定", `cdk bootstrap aws://${LOCAL_ACCOUNT_ID}/ap-northeast-1`],
+      ["ECR のホスト名", `${LOCAL_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/niteru-lab`],
     ])("Floci のダミーのアカウント（%s）", (_label, text) => {
       expect(scan(text)).toEqual([]);
     });

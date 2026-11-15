@@ -9,16 +9,35 @@ minVersion = "v8.21.0"
 useDefault = true
 
 # 標準のルールは AWS のアカウント ID を検出しない。アカウント ID は秘密情報ではないが、
-# 公開リポジトリに書くと攻撃の足がかり（アカウントの特定、IAM ロール名の推測）になるため検出する
+# 公開リポジトリに書くと攻撃の足がかり（アカウントの特定、IAM ロール名の推測）になるため検出する。
+# 12 桁の数字の直前が次のどれかなら検出する
+#   - ARN：arn:aws:iam::<id>:
+#   - 環境の指定：aws://<id>/
+#   - account を含むキーや引数：account / accountId / account-id / AWS_ACCOUNT_ID /
+#     CDK_DEFAULT_ACCOUNT（= や : のほか、--account <id> のように空白で区切る形も）
+#   - CDK の bootstrap のリソース名：cdk-hnb659fds-assets-<id>-<region> など
 [[rules]]
 id = "aws-account-id"
-description = "AWS のアカウント ID（ARN、account の値、aws:// の環境指定）"
-regex = '''(?i)(?:arn:aws[a-z-]*:[a-z0-9-]*:[a-z0-9-]*:|aws://|\b(?:aws_?)?account(?:_?id)?["']?\s*[:=]\s*["']?)(\d{12})\b'''
+description = "AWS のアカウント ID（ARN、account の値、aws:// の環境指定、CDK の bootstrap のリソース名）"
+regex = '''(?i)(?:arn:aws[a-z-]*:[a-z0-9-]*:[a-z0-9-]*:|aws://|account(?:[_-]?id)?["']?(?:\s*[:=]\s*|\s+)["']?|\bcdk-[a-z0-9]+-[a-z-]+-)(\d{12})\b'''
 secretGroup = 1
-keywords = ["arn:aws", "aws://", "account"]
+keywords = ["arn:aws", "aws://", "account", "cdk-"]
 
 # Floci（ローカルの AWS エミュレーター）のダミーのアカウントは本物ではないので許可する。
 # gitleaks 8.30.1 は同じ数字の繰り返しをもともと報告しないが、その挙動に依存しないよう明示する
+[[rules.allowlists]]
+description = "Floci のダミーのアカウント"
+regexes = ['''^0{12}$''']
+
+# ECR のレジストリのホスト名（<id>.dkr.ecr.<region>.amazonaws.com）。
+# アカウント ID が先頭にあり、上のルールと同じ形の正規表現にまとめられないため分ける
+[[rules]]
+id = "aws-account-id-ecr"
+description = "ECR のレジストリのホスト名にある AWS のアカウント ID"
+regex = '''(?i)\b(\d{12})\.dkr\.ecr\.'''
+secretGroup = 1
+keywords = ["dkr.ecr"]
+
 [[rules.allowlists]]
 description = "Floci のダミーのアカウント"
 regexes = ['''^0{12}$''']
