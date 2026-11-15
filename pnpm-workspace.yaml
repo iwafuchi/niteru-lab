@@ -1,3 +1,10 @@
 allowBuilds:
   esbuild: false
   lefthook: false
+
+# 依存は ^ や ~ を付けず、バージョンを完全に固定して package.json に書く（pnpm add -E と同じ）
+saveExact: true
+
+# 公開から 7 日（分単位）たっていないバージョンは、追加・更新のときに選ばない。
+# 乗っ取られたパッケージは短期間で取り下げられることが多いため（Dependabot の cooldown と同じ日数）
+minimumReleaseAge: 10080
