@@ -13,3 +13,6 @@ services:
     environment:
       # 本物の AWS で使う予定の東京リージョンにそろえる（Floci の既定は us-east-1）
       FLOCI_DEFAULT_REGION: ap-northeast-1
+      # ECR を止める。有効だと cdk bootstrap のときに、古いレジストリのイメージ（registry:2）の
+      # コンテナが起動する。このアプリはコンテナイメージを使わないため不要（docs/decisions/0003）
+      FLOCI_SERVICES_ECR_ENABLED: "false"
