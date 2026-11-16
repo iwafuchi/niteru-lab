@@ -6,7 +6,7 @@
 - 公開から 7 日たっていないバージョンは、`minimumReleaseAge` により pnpm が選ばない（間接的な依存も含む）。pnpm はインストールのたびに lockfile もこの条件で検証するため、CI の `pnpm install --frozen-lockfile` でも違反は止まる。どうしても新しい版が必要なら、理由を書いて `minimumReleaseAgeExclude` に加える
 - 完全に固定しない例外（今は `@types/node` だけ）は、[scripts/check-pins.ts](../scripts/check-pins.ts) の `RANGE_ALLOWED` に理由と一緒に書く
 - インストール時にスクリプトを実行するパッケージ（postinstall など）は、pnpm が標準でブロックする。必要かどうかを判断し、[pnpm-workspace.yaml](../pnpm-workspace.yaml) の `allowBuilds` で許可・拒否を明示する
-- mise で入れるツールは、`mise.toml` に書いてから `mise lock --platform linux-x64` でチェックサムを記録する（`locked = true` のため、`mise use` ではロックにないツールを入れられない）。配布物は WSL（glibc 2.35）でも動くものを選ぶ（例：lychee は musl 版）。`mise.lock` と lychee の `asset_pattern` は linux-x64 だけを前提にしているため、ARM の環境（Apple Silicon、arm64 の CI）で動かすなら両方を見直す
+- mise で入れるツールは、`mise.toml` に書いてから `mise lock --platform linux-x64` でチェックサムを記録する（`locked = true` のため、`mise use` ではロックにないツールを入れられない）。配布物は、動く環境が glibc の版に縛られないものを選ぶ（例：lychee は gnu 版が glibc 2.38 以降を必要とするため、静的にリンクされた musl 版）。`mise.lock` と lychee の `asset_pattern` は linux-x64 だけを前提にしているため、ARM の環境（Apple Silicon、arm64 の CI）で動かすなら両方を見直す
 - ワークフローの `uses:` を追加・変更したら `gh actions-lock` で `.github/workflows/actions.lock` を更新し、`gh actions-lock --verify` で確認する。lockfile は手で編集しない
 
 ## 更新（Dependabot）
