@@ -24,6 +24,11 @@ Floci は ECR を再現するために、レジストリのコンテナを自分
 - `FLOCI_SERVICES_ECR_REGISTRY_IMAGE` に `registry:3.x@sha256:...` を指定する
 - 採用しない理由：使わないコンテナを動かし続けることになる。また、環境変数に書いたイメージは Dependabot が更新しない。Dependabot が書き換えるのは `services.<name>.image` だけで、YAML のアンカーで `image:` と環境変数に同じ値を使う方法も、Dependabot の書き換え用の正規表現に合わなくなる。そのため手動で更新することになる
 
+## 注意点
+
+- Floci は知らない環境変数を無視する。この行を消しても Floci は起動するので、`test/integration/compose.test.ts` で指定が残っていることを確かめる。ただし、Floci の更新で設定の名前が変わった場合は、このテストでは気づけない。Floci を更新したら、bootstrap の後に `floci-aws-ecr-registry` のコンテナが起動していないことを `docker ps` で確かめる
+- Floci は Lambda の実行環境のイメージ（`public.ecr.aws/lambda/nodejs:24`）も、`compose.yaml` の外でタグを指定して取得する。こちらは止められない（Lambda を動かすのに要る）。AWS が保守していて、パッチのたびに同じタグで更新されるため、digest では固定せず、タグで最新を取得することを受け入れる
+
 ## 見直すきっかけ
 
 - コンテナイメージの Lambda や ECS など、ECR を使う構成を試す。そのときは、レジストリのイメージを digest で固定して指定する
