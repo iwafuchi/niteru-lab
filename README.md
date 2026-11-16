@@ -138,7 +138,7 @@ export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_
 aws lambda list-functions
 ```
 
-Floci は状態をメモリに持つため、停止するとデプロイしたものも bootstrap も消えます。IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。
+Floci は状態をメモリに持つため、停止するとデプロイしたものも bootstrap も消えます。IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。コンテナイメージは使わないため、ECR は止めています（[docs/decisions/0003](docs/decisions/0003-floci-disable-ecr.md)）。
 
 ### 品質を保つ仕組み
 
