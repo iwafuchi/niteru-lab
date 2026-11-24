@@ -24,7 +24,7 @@ npm パッケージ、GitHub Actions、`compose.yaml` の Docker イメージは
 
 `pnpm check`（`pnpm check:pins`）が、package.json の依存が完全に固定されていること、`packageManager` に sha512 があること、`compose.yaml` のイメージに digest があることを検査します。
 
-取得するものはすべて、バージョンに加えてチェックサム（またはコミット SHA）で固定します。
+取得するものは、バージョンに加えてチェックサム（またはコミット SHA）で固定します（例外は下の「Lambda の実行環境のイメージ」だけ）。
 同じバージョン番号のまま中身が差し替えられる攻撃を防ぐためです。
 
 | 対象                                        | 固定する場所                                     | 更新の方法                                                                                                             |
@@ -35,3 +35,15 @@ npm パッケージ、GitHub Actions、`compose.yaml` の Docker イメージは
 | mise 本体（CI）                             | `ci.yml` の `version` と `sha256`                | リリースの `SHASUMS256.txt` から `linux-x64` のバイナリの値を写す                                                      |
 | GitHub Actions                              | `.github/workflows/actions.lock`（コミット SHA） | Dependabot（lockfile も同じ PR で更新される）。ワークフローに Action を追加したら `gh actions-lock`                    |
 | Floci（ローカルの AWS エミュレーター）      | `compose.yaml` の `image`（タグと digest）       | Dependabot（`docker-compose`）                                                                                         |
+
+### Lambda の実行環境のイメージ
+
+Floci が Lambda を動かすイメージ（`public.ecr.aws/lambda/nodejs:24`）は、固定せずタグで取得します（理由は [0003](decisions/0003-floci-disable-ecr.md)）。Floci は手元に同じタグのイメージがあると取得を省くため、新しくするときは手動で取得します。
+
+```bash
+pnpm floci:down   # 起動中の Floci は古いイメージを使い続けるため、先に止める
+docker pull public.ecr.aws/lambda/nodejs:24
+pnpm floci:up
+pnpm cdk:local bootstrap aws://000000000000/ap-northeast-1   # 停止すると bootstrap も消えるため
+pnpm cdk:local deploy
+```
