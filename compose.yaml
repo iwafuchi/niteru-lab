@@ -3,7 +3,7 @@
 services:
   floci:
     # タグは付け替えられるため digest で固定する（2.4.0）。更新は Dependabot が行う
-    image: floci/floci:2.4.0@sha256:5ee85db604c4aa74ac76e07ea5cc83086f37bb472bf3dbb97e34019e48efae9c
+    image: floci/floci:2.5.0@sha256:a0fbf944d7f338cc0856f1ef83831ea749ff2be71956eb7a7fce08fc21458e19
     ports:
       # 外部から接続されないよう、ホストの 127.0.0.1 にだけ公開する
       - "127.0.0.1:4566:4566"
