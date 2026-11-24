@@ -35,6 +35,7 @@ npm パッケージ、GitHub Actions、`compose.yaml` の Docker イメージは
 | mise 本体（CI）                             | `ci.yml` の `version` と `sha256`                | リリースの `SHASUMS256.txt` から `linux-x64` のバイナリの値を写す                                                      |
 | GitHub Actions                              | `.github/workflows/actions.lock`（コミット SHA） | Dependabot（lockfile も同じ PR で更新される）。ワークフローに Action を追加したら `gh actions-lock`                    |
 | Floci（ローカルの AWS エミュレーター）      | `compose.yaml` の `image`（タグと digest）       | Dependabot（`docker-compose`）                                                                                         |
+| Lambda の実行環境のイメージ（ローカル）     | 固定しない（タグで取得）                         | 手動（下の「Lambda の実行環境のイメージ」）                                                                            |
 
 ### Lambda の実行環境のイメージ
 
