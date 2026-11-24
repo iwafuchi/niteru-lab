@@ -27,7 +27,7 @@ Floci は ECR を再現するために、レジストリのコンテナを自分
 ## 注意点
 
 - Floci は知らない環境変数を無視する。この行を消しても Floci は起動するので、`test/integration/compose.test.ts` で指定が残っていることを確かめる。ただし、Floci の更新で設定の名前が変わった場合は、このテストでは気づけない。Floci を更新したら、bootstrap の後に `floci-aws-ecr-registry` のコンテナが起動していないことを `docker ps` で確かめる
-- Floci は Lambda の実行環境のイメージ（`public.ecr.aws/lambda/nodejs:24`）も、`compose.yaml` の外でタグを指定して取得する。こちらは止められない（Lambda を動かすのに要る）。AWS が保守していて、パッチのたびに同じタグで更新されるため、digest では固定せず、タグで最新を取得することを受け入れる
+- Floci は Lambda の実行環境のイメージ（`public.ecr.aws/lambda/nodejs:24`）も、`compose.yaml` の外でタグを指定して取得する。こちらは止められない（Lambda を動かすのに要る）。AWS が保守していて、パッチのたびに同じタグで更新されるため、digest では固定せず、タグで取得することを受け入れる。ただし、Floci は手元に同じタグのイメージがあると取得を省くため、自動では新しくならない（2026-11-24 訂正：当初は「タグで最新を取得する」と書いていた）。新しくするには `docker pull public.ecr.aws/lambda/nodejs:24` を実行してから、`pnpm floci:up` とデプロイをやり直す（Floci 2.4.0 で確認）
 
 ## 見直すきっかけ
 
