@@ -11,6 +11,7 @@
 | [testing.md](testing.md)           | テストピラミッドと、テストを仕様のガードとして書くためのルール   |
 | [review.md](review.md)             | PR を作る前のセルフレビューのループと観点表                      |
 | [dependencies.md](dependencies.md) | 依存の追加・更新（Dependabot）、バージョンとチェックサムの固定   |
+| [dependabot.md](dependabot.md)     | Dependabot の PR を仕分け、確認し、まとめて片付ける手順          |
 
 規約のうち機械で検査できるものは、設定ファイル（`commitlint.config.ts`、`.oxlintrc.json`、`lefthook.yml` など）と CI で検査しています。
 
