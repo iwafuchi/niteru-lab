@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
 
       # mise.toml に書いたツール（Node / pnpm / gitleaks / shellcheck / lychee）をローカルと同じバージョンで入れる
-      - uses: jdx/mise-action@v5.2.7
+      - uses: jdx/mise-action@v5.2.9
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4
@@ -52,7 +52,7 @@ jobs:
           # 全履歴を検査するため
           fetch-depth: 0
           persist-credentials: false
-      - uses: jdx/mise-action@v5.2.7
+      - uses: jdx/mise-action@v5.2.9
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4
@@ -71,7 +71,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: jdx/mise-action@v5.2.7
+      - uses: jdx/mise-action@v5.2.9
         with:
           # mise 本体もローカルと同じバージョンに固定し、バイナリのチェックサムを検証する
           version: 2026.11.4
