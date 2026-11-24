@@ -11,6 +11,7 @@ AWS CDK と GitHub Actions の学習用プロジェクト。概要は README.md 
 | ブランチ・PR         | [docs/pull-request.md](docs/pull-request.md) |
 | テスト               | [docs/testing.md](docs/testing.md)           |
 | 依存の追加・更新     | [docs/dependencies.md](docs/dependencies.md) |
+| Dependabot の PR     | [docs/dependabot.md](docs/dependabot.md)     |
 | 設計・技術選定の判断 | [docs/decisions/](docs/decisions/README.md)  |
 | PR を作る前の確認    | [docs/review.md](docs/review.md)             |
 
