@@ -107,6 +107,7 @@ curl -X POST http://localhost:3000/tokenize \
 | `pnpm test:unit` / `test:integration` / `test:e2e` | 層ごとにテストを実行                                                                                                                       |
 | `pnpm test:watch`                                  | 変更を検知してテストを再実行                                                                                                               |
 | `pnpm floci:up` / `floci:down`                     | ローカルの AWS エミュレーター（Floci）を起動 / 停止（Floci が起動した Lambda のコンテナも削除）                                            |
+| `pnpm floci:smoke`                                 | Floci を起動してデプロイし、API の応答と、Lambda 以外のコンテナが起動しないことを確かめて停止する（Floci が動いていたら実行しない）        |
 | `pnpm cdk:local <コマンド>`                        | CDK を Floci に向けて実行（例：`pnpm cdk:local deploy`）。認証情報は Floci 用のダミーに差し替える                                          |
 | `pnpm lint` / `lint:fix`                           | 型情報を使う Lint（oxlint）/ 自動修正                                                                                                      |
 | `pnpm lint:shell` / `lint:links`                   | シェルスクリプトの静的解析（shellcheck）/ Markdown の相対リンク切れの検査（lychee、外部には接続しない）                                    |
@@ -138,6 +139,8 @@ export AWS_ENDPOINT_URL=http://127.0.0.1:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_
 aws lambda list-functions
 ```
 
+起動からデプロイ、API の応答の確認、停止までをまとめて行うには `pnpm floci:smoke` を使います。
+
 Floci は状態をメモリに持つため、停止するとデプロイしたものも bootstrap も消えます。IAM の認証と権限は検証されないため、それらは本物の AWS で確認します。コンテナイメージは使わないため、ECR は止めています（[docs/decisions/0003](docs/decisions/0003-floci-disable-ecr.md)）。
 
 ### 品質を保つ仕組み
@@ -166,7 +169,7 @@ src/
 infra/
 ├─ bin/app.ts     CDK アプリ（デプロイ先を選ぶ）
 └─ lib/           スタックの定義（Lambda と Function URL）
-scripts/          Floci の停止、CDK を Floci に向ける実行スクリプト
+scripts/          Floci の停止と動作確認、CDK を Floci に向ける実行、依存の固定と synth の結果の検査
 test/
 ├─ unit/          純粋な関数のテスト
 ├─ integration/   辞書や HTTP 層を組み合わせたテスト

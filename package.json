@@ -18,6 +18,7 @@
     "test:watch": "vitest --project unit --project integration",
     "floci:up": "docker compose up -d --wait",
     "floci:down": "scripts/floci-down.sh",
+    "floci:smoke": "tsx scripts/floci-smoke.ts",
     "cdk:local": "scripts/cdk-local.sh",
     "synth": "scripts/cdk-local.sh synth --quiet && tsx scripts/check-synth.ts",
     "check:pins": "tsx scripts/check-pins.ts",
