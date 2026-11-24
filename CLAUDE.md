@@ -26,6 +26,7 @@ pnpm typecheck
 pnpm format
 pnpm dev         # ローカルで API を起動
 pnpm floci:up    # ローカルの AWS エミュレーター（Floci）を起動。止めるときは floci:down
+pnpm floci:smoke # Floci での動作確認（起動、デプロイ、API の応答、余計なコンテナがないこと、停止）
 pnpm cdk:local deploy  # CDK を Floci に向けて実行（本物の AWS には向かない）
 ```
 

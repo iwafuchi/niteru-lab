@@ -17,6 +17,8 @@
 | `test/integration/` | kuromoji の辞書、Hono の HTTP 層、CDK のテンプレート、Floci 上の S3/SSM | `pnpm test:integration` |
 | `test/e2e/`         | デプロイ済みの Dev 環境の Function URL                                  | `pnpm test:e2e`         |
 
+`pnpm floci:smoke` は、Floci に実際にデプロイして代表的な応答を確かめる動作確認です。Docker が必要なので `pnpm test` と `pnpm check` には含めません。仕様の網羅は上の 3 層で行います。
+
 `pnpm test` は unit と integration を実行します。e2e は AWS の認証情報とデプロイ済みの環境が必要なので、明示的に実行したときだけ動きます。
 
 ### どの層に書くか
