@@ -201,7 +201,7 @@ async function send(base: URL, request: SmokeRequest): Promise<SmokeResponse> {
 }
 
 async function deployAndCheck(workDir: string): Promise<string[]> {
-  run("pnpm", ["cdk:local", "bootstrap", "aws://000000000000/ap-northeast-1"]);
+  run("pnpm", ["cdk:local", "bootstrap"]);
   const outputsFile = path.join(workDir, "outputs.json");
   run("pnpm", [
     "cdk:local",

@@ -120,7 +120,7 @@ curl -X POST http://localhost:3000/tokenize \
 
 ```bash
 pnpm floci:up
-pnpm cdk:local bootstrap aws://000000000000/ap-northeast-1   # 起動するたびに 1 回
+pnpm cdk:local bootstrap   # 起動するたびに 1 回
 pnpm cdk:local deploy
 pnpm floci:down
 ```
