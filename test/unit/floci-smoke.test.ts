@@ -108,15 +108,20 @@ describe("Floci が起動したコンテナの検査", () => {
 
 describe("停止した後に残ったものの検査", () => {
   test("何も残っていなければ違反はない", () => {
-    expect(findLeftoverViolations({ containers: [], networks: [] })).toEqual([]);
+    expect(findLeftoverViolations({ containers: [], networks: [], volumes: [] })).toEqual([]);
   });
 
-  test("コンテナやネットワークが残っていれば、すべてを報告する", () => {
+  test("コンテナ・ネットワーク・ボリュームが残っていれば、すべてを報告する", () => {
     expect(
-      findLeftoverViolations({ containers: [REGISTRY], networks: ["niteru-lab_default"] }),
+      findLeftoverViolations({
+        containers: [REGISTRY],
+        networks: ["niteru-lab_default"],
+        volumes: ["c7e2c79d"],
+      }),
     ).toEqual([
       `停止した後にコンテナが残っている: ${REGISTRY}`,
       "停止した後にネットワークが残っている: niteru-lab_default",
+      "停止した後にボリュームが残っている: c7e2c79d",
     ]);
   });
 });

@@ -115,10 +115,12 @@ export function findContainerViolations(containers: FlociContainer[]): string[] 
 export function findLeftoverViolations(leftover: {
   containers: string[];
   networks: string[];
+  volumes: string[];
 }): string[] {
   return [
     ...leftover.containers.map((name) => `停止した後にコンテナが残っている: ${name}`),
     ...leftover.networks.map((name) => `停止した後にネットワークが残っている: ${name}`),
+    ...leftover.volumes.map((name) => `停止した後にボリュームが残っている: ${name}`),
   ];
 }
 
@@ -167,6 +169,14 @@ function findRemaining(): { containers: string[]; networks: string[] } {
     ],
     networks: lines(docker("network", "ls", "--filter", ofProject, "--format", "{{.Name}}")),
   };
+}
+
+/** 動いている Floci のコンテナが使っているボリュームの名前（匿名ボリュームは名前に手がかりがない） */
+function volumesInUse(): string[] {
+  const ids = lines(docker("compose", "ps", "-aq"));
+  if (ids.length === 0) return [];
+  const format = '{{range .Mounts}}{{if eq .Type "volume"}}{{println .Name}}{{end}}{{end}}';
+  return lines(docker("inspect", "--format", format, ...ids));
 }
 
 async function send(base: URL, request: SmokeRequest): Promise<SmokeResponse> {
@@ -225,11 +235,23 @@ async function main(): Promise<void> {
   try {
     run("pnpm", ["floci:up"]);
     violations.push(...(await deployAndCheck(workDir)));
+  } catch (error) {
+    // 片付けも失敗したときに、もとの原因が隠れないよう先に表示する
+    console.error(error);
+    violations.push("動作確認が途中で失敗した（原因は上のエラー）");
   } finally {
     rmSync(workDir, { recursive: true, force: true });
-    run("pnpm", ["floci:down"]);
   }
-  violations.push(...findLeftoverViolations(findRemaining()));
+
+  const volumes = volumesInUse();
+  run("pnpm", ["floci:down"]);
+  const remainingVolumes = new Set(lines(docker("volume", "ls", "-q")));
+  violations.push(
+    ...findLeftoverViolations({
+      ...findRemaining(),
+      volumes: volumes.filter((name) => remainingVolumes.has(name)),
+    }),
+  );
 
   if (violations.length > 0) {
     console.error(
